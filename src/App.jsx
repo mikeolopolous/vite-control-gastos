@@ -1,6 +1,6 @@
-import { useInsertionEffect } from 'react'
 import { useState, useEffect } from 'react'
 import Header from "./components/Header"
+import Filtros from "./components/Filtros"
 import ListadoGastos from './components/ListadoGastos'
 import Modal from "./components/Modal"
 import { generarId } from './helpers'
@@ -18,6 +18,8 @@ function App() {
   const [modal, setModal] = useState(false)
   const [animarModal, setAnimarModal] = useState(false)
   const [gastoEditar, setGastoEditar] = useState({})
+  const [filtro, setFiltro] = useState('')
+  const [gastosFiltrados, setGastosFiltrados] = useState([])
 
   const handleNuevoGasto = () => {
     setModal(true)
@@ -68,6 +70,12 @@ function App() {
     localStorage.setItem('gastos', JSON.stringify(gastos) ?? [])
   }, [gastos])
   
+  useEffect( () => {
+    if (filtro){
+      const gastosFiltrados = gastos.filter( gasto => gasto.categoria === filtro )
+      setGastosFiltrados(gastosFiltrados)
+    }
+  }, [filtro])
 
   useEffect( () => {
     const presupuestoLS = localStorage.getItem('presupuesto') ?? 0
@@ -92,6 +100,10 @@ function App() {
         isValidPresupuesto && (
           <>
             <main>
+              <Filtros
+                filtro={filtro}
+                setFiltro={setFiltro}
+              />
               <ListadoGastos
                 gastos={gastos}
                 setGastoEditar={setGastoEditar}
